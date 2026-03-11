@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="64" fill="#1DA1F2"/>
+  <!-- Chain link left -->
+  <rect x="18" y="52" width="36" height="24" rx="12" ry="12" fill="none" stroke="white" stroke-width="9"/>
+  <!-- Chain link right -->
+  <rect x="74" y="52" width="36" height="24" rx="12" ry="12" fill="none" stroke="white" stroke-width="9"/>
+  <!-- Connector -->
+  <line x1="54" y1="64" x2="74" y2="64" stroke="white" stroke-width="9" stroke-linecap="round"/>
+  <!-- Arrow head pointing right (resolution) -->
+  <polyline points="88,50 104,64 88,78" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
