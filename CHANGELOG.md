@@ -1,3 +1,9 @@
+## [1.0.5](https://github.com/user-cube/url-cleaner/compare/v1.0.4...v1.0.5) (2026-03-21)
+
+### Bug Fixes
+
+* update semantic release ([4324f91](https://github.com/user-cube/url-cleaner/commit/4324f91f2e311c68cc3e1d47183871cff156ff07))
+
 ## [1.0.4](https://github.com/user-cube/url-cleaner/compare/v1.0.3...v1.0.4) (2026-03-21)
 
 ### Bug Fixes
