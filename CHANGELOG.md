@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/user-cube/url-cleaner/compare/v1.0.3...v1.0.4) (2026-03-21)
+
+### Bug Fixes
+
+* manifest per browser ([637b620](https://github.com/user-cube/url-cleaner/commit/637b6200c89e08da2a65cb1a3f867deb1bb1df1d))
+
 ## [1.0.3](https://github.com/user-cube/url-cleaner/compare/v1.0.2...v1.0.3) (2026-03-21)
 
 ### Bug Fixes
