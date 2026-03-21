@@ -1,0 +1,32 @@
+{
+  "name": "url-cleaner",
+  "version": "1.0.0",
+  "description": "A browser extension that transparently resolves `t.co` short links on Twitter/X to their real destination URL before you navigate.",
+  "main": "background.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "build": "zip -r url-cleaner.zip . -x '*.git*' '*.DS_Store' 'node_modules/*' 'tests/*' 'playwright-report/*' 'test-results/*' 'url-cleaner.zip' '*.config.js' '.releaserc.yml' 'screenshot.jpg'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/user-cube/url-cleaner.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/user-cube/url-cleaner/issues"
+  },
+  "homepage": "https://github.com/user-cube/url-cleaner#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "jsdom": "^29.0.1",
+    "semantic-release": "^25.0.3",
+    "vitest": "^4.1.0"
+  }
+}

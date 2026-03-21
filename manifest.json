@@ -21,10 +21,6 @@
     }
   },
 
-  "permissions": [
-    "tabs"
-  ],
-
   "host_permissions": [
     "https://t.co/*",
     "https://twitter.com/*",

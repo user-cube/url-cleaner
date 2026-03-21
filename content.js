@@ -9,7 +9,9 @@ const resolvedMap = new Map();
 const isoMap = new Map();
 
 function updateBadge() {
-  chrome.runtime.sendMessage({ type: "UPDATE_BADGE", count: resolvedMap.size });
+  chrome.runtime.sendMessage({ type: "UPDATE_BADGE", count: resolvedMap.size }, () => {
+    void chrome.runtime.lastError;
+  });
 }
 
 function extractUrlFromText(a) {
