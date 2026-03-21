@@ -1,3 +1,9 @@
+## [1.0.2](https://github.com/user-cube/url-cleaner/compare/v1.0.1...v1.0.2) (2026-03-21)
+
+### Bug Fixes
+
+* fix ci ([0d26961](https://github.com/user-cube/url-cleaner/commit/0d26961cfc3f202a9cbb8c6c8c83bbb5a26b3708))
+
 ## [1.0.1](https://github.com/user-cube/url-cleaner/compare/v1.0.0...v1.0.1) (2026-03-21)
 
 ### Bug Fixes
