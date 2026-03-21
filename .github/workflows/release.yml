@@ -6,31 +6,15 @@ on:
 
 permissions:
   contents: write
-  issues: write
-  pull-requests: write
 
 jobs:
   release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-
-      - run: npm test
-
-      - name: Build extension ZIP
-        run: npm run build
-
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+    uses: AutomationDojo/reusable-cicd/.github/workflows/node-release.yml@main
+    with:
+      node-version: "22"
+      build-cmd: npm run build
+      lint-cmd: echo "no lint configured"
+      extra-plugins: "@semantic-release/changelog @semantic-release/git conventional-changelog-conventionalcommits"
+    secrets:
+      GITHUB_APP_ID: ${{ secrets.GH_APP_ID }}
+      GITHUB_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
