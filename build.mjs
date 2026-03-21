@@ -2,6 +2,8 @@ import { execSync } from "child_process";
 import { readFileSync, writeFileSync, rmSync, mkdirSync } from "fs";
 
 const manifest = JSON.parse(readFileSync("manifest.json", "utf-8"));
+const { version } = JSON.parse(readFileSync("package.json", "utf-8"));
+manifest.version = version;
 
 const EXCLUDE = [
   "*.git*",

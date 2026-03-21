@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "URL Cleaner - t.co Resolver",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "Resolves t.co short links on Twitter/X to their final destination URL.",
   "icons": {
     "16": "icons/icon16.png",
