@@ -1,6 +1,6 @@
 {
   "name": "url-cleaner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A browser extension that transparently resolves `t.co` short links on Twitter/X to their real destination URL before you navigate.",
   "main": "background.js",
   "scripts": {

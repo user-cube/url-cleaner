@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/user-cube/url-cleaner/compare/v1.0.0...v1.0.1) (2026-03-21)
+
+### Bug Fixes
+
+* remove unused tab permissions ([30e7816](https://github.com/user-cube/url-cleaner/commit/30e781633788b359e0e3b3b6dcb7f1a8e85eecd5))
+
 ## 1.0.0 (2026-03-21)
 
 ### Features
