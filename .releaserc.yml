@@ -53,5 +53,7 @@ plugins:
 
   - - "@semantic-release/github"
     - assets:
-        - path: url-cleaner.zip
-          label: "Extension ZIP"
+        - path: url-cleaner-chrome.zip
+          label: "Chrome / Edge / Brave"
+        - path: url-cleaner-firefox.zip
+          label: "Firefox"

@@ -143,4 +143,5 @@ vite.config.ts.timestamp-*
 /playwright-report/
 
 # Extension distribution
-url-cleaner.zip
+url-cleaner-chrome.zip
+url-cleaner-firefox.zip

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "build": "zip -r url-cleaner.zip . -x '*.git*' '*.DS_Store' 'node_modules/*' 'tests/*' 'playwright-report/*' 'test-results/*' 'url-cleaner.zip' '*.config.js' '.releaserc.yml' 'screenshot.jpg'"
+    "build": "node build.mjs"
   },
   "repository": {
     "type": "git",
