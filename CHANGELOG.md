@@ -1,3 +1,9 @@
+## [1.0.6](https://github.com/user-cube/url-cleaner/compare/v1.0.5...v1.0.6) (2026-03-21)
+
+### Bug Fixes
+
+* fix manifest for firefox ([132b9bd](https://github.com/user-cube/url-cleaner/commit/132b9bdca1c4e3ed24e81f146ea76cdf6b0ec044))
+
 ## [1.0.5](https://github.com/user-cube/url-cleaner/compare/v1.0.4...v1.0.5) (2026-03-21)
 
 ### Bug Fixes
