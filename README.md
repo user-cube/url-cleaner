@@ -41,16 +41,15 @@ This approach works entirely offline with respect to `t.co` — no outbound requ
 
 ### Firefox
 
+Install from [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/url-cleaner-t-co-resolver/), or load temporarily:
+
 1. Go to `about:debugging#/runtime/this-firefox`
 2. Click **Load Temporary Add-on** and select the `manifest.json` file
-
-> For a permanent Firefox installation, the extension must be signed via [addons.mozilla.org](https://addons.mozilla.org).
 
 ## Permissions
 
 | Permission | Reason |
 |---|---|
-| `tabs` | Update the badge count per tab |
 | `host_permissions: https://t.co/*` | Resolve t.co URLs if needed |
 | `host_permissions: https://twitter.com/*`, `https://x.com/*` | Inject content scripts into Twitter/X pages |
 
