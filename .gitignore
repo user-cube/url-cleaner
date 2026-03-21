@@ -145,3 +145,6 @@ vite.config.ts.timestamp-*
 # Extension distribution
 url-cleaner-chrome.zip
 url-cleaner-firefox.zip
+
+# MacOS
+.DS_Store
