@@ -12,9 +12,10 @@ jobs:
     uses: AutomationDojo/reusable-cicd/.github/workflows/node-release.yml@main
     with:
       node-version: "22"
-      build-cmd: npm run build
+      build-cmd: echo "no build in ci"
       lint-cmd: echo "no lint configured"
       extra-plugins: "@semantic-release/changelog @semantic-release/git conventional-changelog-conventionalcommits"
+      pre-install: "npm ci && npm run build"
     secrets:
       GITHUB_APP_ID: ${{ secrets.GH_APP_ID }}
       GITHUB_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
