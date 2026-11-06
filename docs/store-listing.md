@@ -20,7 +20,11 @@ Upload these from `docs/store-assets`, in order, to both stores:
 
 They are 1280x800, full bleed, 24-bit PNG files with no alpha channel, which matches the size both stores recommend. They show the real extension running on a local demo feed with example domains.
 
-To regenerate them after a UI change, run `npm run screenshots`. It needs ImageMagick.
+## Promo tile (Chrome only)
+
+Upload `promo-small-440x280.png` from `docs/store-assets` as the small promo tile. It has no text, as Google advises.
+
+To regenerate the images after a UI change, run `npm run screenshots`. It needs ImageMagick.
 
 ## Links
 

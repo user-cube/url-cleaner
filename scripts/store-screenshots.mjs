@@ -1,8 +1,9 @@
-// Generates the store screenshots in docs/store-assets with the real extension.
+// Generates the store images in docs/store-assets. Screenshots use the real extension.
 // The page behind the extension is a local demo feed with example domains.
 //
-// Output is 1280x800, full bleed. The UI is rendered at 2x so it stays readable
+// Screenshots are 1280x800, full bleed. The UI is rendered at 2x so it stays readable
 // when the Chrome Web Store downscales screenshots to 640x400.
+// The Chrome small promo tile is 440x280, with no text, as Google advises.
 //
 // Usage: npm run screenshots
 // Set CHROMIUM_PATH to use a specific Chromium build.
@@ -58,6 +59,31 @@ const API_RESPONSE = [
   { url: "https://t.co/article", expanded_url: "https://example.com/articles/private-links?utm_source=feed&id=42" },
   { url: "https://t.co/notes", expanded_url: "https://example.net/releases/notes?fbclid=demo" },
 ];
+
+const icon = fs
+  .readFileSync(path.join(root, "icons/icon.svg"), "utf-8")
+  .replace("<svg ", '<svg x="130" y="50" width="180" height="180" ');
+
+// Drawn in 440x280 units. The page renders it at 220x140 and 2x, which gives 440x280.
+const PROMO_TILE = `<!DOCTYPE html>
+<html>
+  <body style="margin:0">
+    <svg xmlns="http://www.w3.org/2000/svg" width="220" height="140" viewBox="0 0 440 280" style="display:block">
+      <defs>
+        <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#17364d"/>
+          <stop offset="1" stop-color="#15202b"/>
+        </linearGradient>
+      </defs>
+      <rect width="440" height="280" fill="url(#background)"/>
+      <g fill="none" stroke="#4db5f5" stroke-opacity="0.22" stroke-width="26">
+        <rect x="-110" y="70" width="210" height="140" rx="70"/>
+        <rect x="340" y="70" width="210" height="140" rx="70"/>
+      </g>
+      ${icon}
+    </svg>
+  </body>
+</html>`;
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "store-screenshots-"));
 const context = await chromium.launchPersistentContext(tmpDir, {
@@ -162,6 +188,12 @@ try {
   await options.waitForSelector("input:checked");
   await save(options, "05-options.png");
   await options.close();
+
+  const promo = await context.newPage();
+  await promo.setViewportSize({ width: 220, height: 140 });
+  await promo.setContent(PROMO_TILE);
+  await save(promo, "promo-small-440x280.png");
+  await promo.close();
 } finally {
   await context.close();
   fs.rmSync(tmpDir, { recursive: true, force: true });
