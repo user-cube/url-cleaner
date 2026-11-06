@@ -2,6 +2,8 @@
 
 A browser extension that transparently resolves `t.co` short links on Twitter/X to their real destination URL before you navigate.
 
+Open source under the [Apache License 2.0](LICENSE). Available for [Chrome](https://chromewebstore.google.com/detail/url-cleaner-tco-resolver/anlndofbmkhpckmfbnebmboibmeiblcj) and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/url-cleaner-t-co-resolver/).
+
 ## Problem
 
 Twitter wraps every external link in tweets with a `t.co` redirect for analytics tracking. If you block `t.co` on your network (via DNS, firewall, Pi-hole, etc.), clicking any link on Twitter/X fails — you never reach the actual website.
@@ -33,6 +35,8 @@ This approach works entirely offline with respect to `t.co` — no outbound requ
 ## Installation
 
 ### Chrome / Edge / Brave
+
+Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/url-cleaner-tco-resolver/anlndofbmkhpckmfbnebmboibmeiblcj), or load unpacked:
 
 1. Go to `chrome://extensions/`
 2. Enable **Developer mode** (top right toggle)
