@@ -22,12 +22,7 @@
   "homepage": "https://github.com/user-cube/url-cleaner#readme",
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@semantic-release/changelog": "^7.0.0",
-    "@semantic-release/git": "^11.0.0",
-    "@semantic-release/github": "^12.0.6",
-    "conventional-changelog-conventionalcommits": "^10.0.0",
     "jsdom": "^31.0.0",
-    "semantic-release": "^25.0.3",
     "vitest": "^5.1.0"
   }
 }

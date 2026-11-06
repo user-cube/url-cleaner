@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "URL Cleaner - t.co Resolver",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "Open source. Resolves t.co short links on Twitter/X to their final destination URL.",
   "homepage_url": "https://github.com/user-cube/url-cleaner",
   "icons": {
