@@ -8,7 +8,7 @@ jobs:
   ci:
     uses: AutomationDojo/reusable-cicd/.github/workflows/node-build-and-test-pr.yml@main
     with:
-      node-version: "22"
+      node-version: "26"
       build-cmd: npm test && npm run build
       skip-typecheck: true
       lint-cmd: echo "no lint configured"
