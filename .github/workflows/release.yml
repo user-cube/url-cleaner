@@ -5,17 +5,51 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  release:
-    uses: AutomationDojo/reusable-cicd/.github/workflows/node-release.yml@main
-    with:
-      node-version: "22"
-      build-cmd: echo "no build in ci"
-      lint-cmd: echo "no lint configured"
-      extra-plugins: "@semantic-release/changelog @semantic-release/git conventional-changelog-conventionalcommits"
-      pre-install: "npm ci && npm run build"
-    secrets:
-      GITHUB_APP_ID: ${{ secrets.GH_APP_ID }}
-      GITHUB_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      # An app token is needed because PRs opened with GITHUB_TOKEN do not trigger CI.
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - uses: googleapis/release-please-action@v5
+        id: release
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  upload-assets:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+      - name: Upload extension packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
+        run: gh release upload "$TAG_NAME" url-cleaner-chrome.zip url-cleaner-firefox.zip --clobber
