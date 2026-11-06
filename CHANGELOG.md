@@ -4,6 +4,19 @@
 
 * fix manifest for firefox ([a9adc9f](https://github.com/user-cube/url-cleaner/commit/a9adc9fb540fbf9d81acecd0b94e5d86281cf45e))
 
+## [1.1.0](https://github.com/user-cube/url-cleaner/compare/v1.0.7...v1.1.0) (2026-11-06)
+
+
+### Features
+
+* redesign popup, remove tracking parameters and add options ([#20](https://github.com/user-cube/url-cleaner/issues/20)) ([2e5e6f3](https://github.com/user-cube/url-cleaner/commit/2e5e6f362ae476c26b0de58829b3591322aafa04))
+
+
+### Bug Fixes
+
+* resolve card links found before the content script starts ([#15](https://github.com/user-cube/url-cleaner/issues/15)) ([94e8ea6](https://github.com/user-cube/url-cleaner/commit/94e8ea67ed814073f0699b4d86f90468493e6d85))
+* update dependencies and declare open source in store listing ([#14](https://github.com/user-cube/url-cleaner/issues/14)) ([353f52e](https://github.com/user-cube/url-cleaner/commit/353f52e6ecbd7f1c1c50e8bbdba61387ce8ece54))
+
 ## [1.0.6](https://github.com/user-cube/url-cleaner/compare/v1.0.5...v1.0.6) (2026-03-21)
 
 ### Bug Fixes
