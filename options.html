@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>URL Cleaner options</title>
+  <link rel="stylesheet" href="ui.css">
+  <style>
+    body { min-width: 360px; max-width: 520px; padding: 16px; }
+    h1 { margin-bottom: 12px; font-size: 16px; font-weight: 600; }
+    label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    input { flex: none; width: 16px; height: 16px; margin-top: 2px; accent-color: var(--accent); }
+    .name { display: block; font-weight: 600; }
+    .detail { display: block; color: var(--muted); font-size: 13px; }
+    #status { min-height: 18px; margin-top: 12px; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>URL Cleaner options</h1>
+  <form>
+    <label>
+      <input type="checkbox" name="stripTracking">
+      <span>
+        <span class="name">Remove tracking parameters</span>
+        <span class="detail">Removes utm_*, fbclid and similar parameters from resolved links.</span>
+      </span>
+    </label>
+    <label>
+      <input type="checkbox" name="warnUnresolved">
+      <span>
+        <span class="name">Warn about unresolved links</span>
+        <span class="detail">Marks links still on t.co with ⚠ and asks before opening them.</span>
+      </span>
+    </label>
+    <label>
+      <input type="checkbox" name="showIndicator">
+      <span>
+        <span class="name">Mark resolved links</span>
+        <span class="detail">Adds a small ✓ after each resolved link.</span>
+      </span>
+    </label>
+    <label>
+      <input type="checkbox" name="showTooltip">
+      <span>
+        <span class="name">Show destination tooltip</span>
+        <span class="detail">Shows the destination and original t.co link on hover.</span>
+      </span>
+    </label>
+  </form>
+  <p id="status" role="status"></p>
+  <script src="lib/settings.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

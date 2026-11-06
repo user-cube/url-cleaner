@@ -8,6 +8,8 @@ const resolvedMap = new Map();
 // Mirror of the MAIN world map, populated via CustomEvents from intercept.js
 const isoMap = new Map();
 
+let settings = URL_CLEANER_DEFAULTS;
+
 function updateBadge() {
   chrome.runtime.sendMessage({ type: "UPDATE_BADGE", count: resolvedMap.size }, () => {
     void chrome.runtime.lastError;
@@ -23,11 +25,12 @@ function extractUrlFromText(a) {
 }
 
 function markResolved(a, tco, expanded) {
-  a.setAttribute("href", expanded);
+  const href = settings.stripTracking ? stripTracking(expanded) : expanded;
+  a.setAttribute("href", href);
   a.dataset.urlCleanerDone = "1";
   // Tooltip: show original t.co + destination on hover
-  a.setAttribute("title", `🔗 ${expanded}\n(was ${tco})`);
-  resolvedMap.set(tco, expanded);
+  if (settings.showTooltip) a.setAttribute("title", `🔗 ${href}\n(was ${tco})`);
+  resolvedMap.set(tco, { expanded: href, trackingRemoved: href !== expanded });
   updateBadge();
 }
 
@@ -60,58 +63,102 @@ function rewriteAnchors(root) {
   for (const a of anchors) rewriteAnchor(a);
 }
 
-// Listen for mappings discovered by intercept.js (MAIN world -> isolated world via CustomEvent)
-window.addEventListener("__urlCleanerUpdate", (e) => {
-  const { tco, expanded } = e.detail;
-  isoMap.set(tco, expanded);
-  for (const a of document.querySelectorAll(`a[href="${CSS.escape(tco)}"], a[data-url-cleaner-done="pending"][href="${CSS.escape(tco)}"]`)) {
-    markResolved(a, tco, expanded);
-  }
-});
-
-// Ask intercept.js to resend mappings found before this script started
-window.dispatchEvent(new CustomEvent("__urlCleanerReady"));
-
 // Respond to popup requesting the list of resolved links
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === "GET_RESOLVED") {
-    sendResponse(Array.from(resolvedMap.entries()).map(([tco, expanded]) => ({ tco, expanded })));
+    sendResponse({
+      links: Array.from(resolvedMap, ([tco, link]) => ({ tco, ...link })),
+      unresolved: document.querySelectorAll('a[data-url-cleaner-done="pending"]').length,
+    });
   }
 });
 
-// Inject CSS for resolved link indicator
-const style = document.createElement("style");
-style.textContent = `
-  a[data-url-cleaner-done="1"]::after {
-    content: " ✓";
-    font-size: 0.75em;
-    color: #1d9bf0;
-    opacity: 0.7;
-    pointer-events: none;
+function injectStyles() {
+  const rules = [];
+  if (settings.showIndicator) {
+    rules.push(`
+      a[data-url-cleaner-done="1"]::after {
+        content: " ✓";
+        font-size: 0.75em;
+        color: #1d9bf0;
+        opacity: 0.7;
+        pointer-events: none;
+      }
+    `);
   }
-`;
-(document.head || document.documentElement).appendChild(style);
-
-rewriteAnchors(document);
-
-const observer = new MutationObserver((mutations) => {
-  for (const mutation of mutations) {
-    for (const node of mutation.addedNodes) {
-      if (node.nodeType !== Node.ELEMENT_NODE) continue;
-      rewriteAnchors(node);
-    }
+  if (settings.warnUnresolved) {
+    rules.push(`
+      a[data-url-cleaner-done="pending"]::after {
+        content: " ⚠";
+        font-size: 0.75em;
+        color: #d97706;
+        pointer-events: none;
+      }
+    `);
   }
-});
-
-const observeTarget = document.body || document.documentElement;
-if (observeTarget) {
-  observer.observe(observeTarget, { childList: true, subtree: true });
-} else {
-  new MutationObserver((_, obs) => {
-    if (document.body) {
-      obs.disconnect();
-      observer.observe(document.body, { childList: true, subtree: true });
-      rewriteAnchors(document.body);
-    }
-  }).observe(document.documentElement, { childList: true });
+  const style = document.createElement("style");
+  style.textContent = rules.join("");
+  (document.head || document.documentElement).appendChild(style);
 }
+
+function guardUnresolvedClick(event) {
+  const a = event.target.closest?.('a[data-url-cleaner-done="pending"]');
+  if (!a || !a.href.startsWith("https://t.co/")) return;
+  event.preventDefault();
+  event.stopPropagation();
+  showUnresolvedWarning(a.href);
+}
+
+function startObserving() {
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType !== Node.ELEMENT_NODE) continue;
+        rewriteAnchors(node);
+      }
+    }
+  });
+
+  const observeTarget = document.body || document.documentElement;
+  if (observeTarget) {
+    observer.observe(observeTarget, { childList: true, subtree: true });
+  } else {
+    new MutationObserver((_, obs) => {
+      if (document.body) {
+        obs.disconnect();
+        observer.observe(document.body, { childList: true, subtree: true });
+        rewriteAnchors(document.body);
+      }
+    }).observe(document.documentElement, { childList: true });
+  }
+}
+
+function start() {
+  injectStyles();
+
+  // Listen for mappings discovered by intercept.js (MAIN world -> isolated world via CustomEvent)
+  window.addEventListener("__urlCleanerUpdate", (e) => {
+    const { tco, expanded } = e.detail;
+    isoMap.set(tco, expanded);
+    for (const a of document.querySelectorAll(`a[href="${CSS.escape(tco)}"], a[data-url-cleaner-done="pending"][href="${CSS.escape(tco)}"]`)) {
+      markResolved(a, tco, expanded);
+    }
+  });
+
+  // Ask intercept.js to resend mappings found before this script started
+  window.dispatchEvent(new CustomEvent("__urlCleanerReady"));
+
+  if (settings.warnUnresolved) {
+    window.addEventListener("click", guardUnresolvedClick, true);
+    window.addEventListener("auxclick", guardUnresolvedClick, true);
+  }
+
+  rewriteAnchors(document);
+  startObserving();
+}
+
+// Mappings that arrive while settings load are not lost: start() asks for a resend.
+chrome.storage.sync.get(URL_CLEANER_DEFAULTS, (stored) => {
+  if (!chrome.runtime.lastError && stored) settings = stored;
+  start();
+});

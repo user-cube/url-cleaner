@@ -6,7 +6,8 @@
   "scripts": {
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "build": "node build.mjs"
+    "build": "node build.mjs",
+    "screenshots": "node scripts/store-screenshots.mjs"
   },
   "repository": {
     "type": "git",

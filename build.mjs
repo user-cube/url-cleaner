@@ -11,6 +11,7 @@ const EXCLUDE = [
   "node_modules/*",
   "tests/*",
   "docs/*",
+  "scripts/*",
   "playwright-report/*",
   "test-results/*",
   "*.config.js",

@@ -1,0 +1,46 @@
+/* Shared tokens for the popup and options pages. Follows the system theme. */
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --hover: #f7f9f9;
+  --text: #0f1419;
+  --muted: #536471;
+  --border: #eff3f4;
+  --control: #cfd9de;
+  --accent: #0b6fbf;
+  --accent-soft: #e3f2fd;
+  --warn: #b54708;
+  --warn-soft: #fef3e2;
+  --ok: #0a7d4f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15202b;
+    --hover: #1c2a38;
+    --text: #e7e9ea;
+    --muted: #8b98a5;
+    --border: #2f3b47;
+    --control: #536471;
+    --accent: #4db5f5;
+    --accent-soft: #17364d;
+    --warn: #f5b14c;
+    --warn-soft: #3a2c15;
+    --ok: #4cc38a;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+a { color: var(--accent); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
