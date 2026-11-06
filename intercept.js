@@ -40,6 +40,16 @@ function InterceptedXHR() {
 InterceptedXHR.prototype = OriginalXHR.prototype;
 window.XMLHttpRequest = InterceptedXHR;
 
+// content.js starts at document_idle, so it misses events fired before then.
+// When it signals that it is listening, send every mapping found so far.
+window.addEventListener("__urlCleanerReady", () => {
+  for (const [tco, expanded] of Object.entries(window.__urlCleanerMap)) {
+    window.dispatchEvent(new CustomEvent("__urlCleanerUpdate", {
+      detail: { tco, expanded }
+    }));
+  }
+});
+
 function walkAndExtract(obj) {
   if (!obj || typeof obj !== "object") return;
   if (Array.isArray(obj)) {

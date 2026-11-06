@@ -69,6 +69,9 @@ window.addEventListener("__urlCleanerUpdate", (e) => {
   }
 });
 
+// Ask intercept.js to resend mappings found before this script started
+window.dispatchEvent(new CustomEvent("__urlCleanerReady"));
+
 // Respond to popup requesting the list of resolved links
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === "GET_RESOLVED") {
