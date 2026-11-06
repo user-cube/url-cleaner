@@ -10,6 +10,7 @@ const EXCLUDE = [
   "*.DS_Store",
   "node_modules/*",
   "tests/*",
+  "docs/*",
   "playwright-report/*",
   "test-results/*",
   "*.config.js",
