@@ -19,6 +19,13 @@
       "128": "icons/icon128.png"
     }
   },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "permissions": [
+    "storage"
+  ],
   "host_permissions": [
     "https://t.co/*",
     "https://twitter.com/*",
@@ -42,6 +49,9 @@
         "https://x.com/*"
       ],
       "js": [
+        "lib/settings.js",
+        "lib/strip-tracking.js",
+        "lib/unresolved-warning.js",
         "content.js"
       ],
       "run_at": "document_idle"

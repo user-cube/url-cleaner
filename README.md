@@ -19,7 +19,10 @@ This extension intercepts Twitter's own API responses to extract the real destin
 - Updates dynamically as you scroll and new tweets load
 - **Tooltip on hover** — shows the real destination URL when hovering over a resolved link
 - **Visual indicator** — a subtle `✓` mark on resolved links so you know they're safe to click
-- **Popup** — click the extension icon to see all resolved links on the current page
+- **Tracking removal** — strips `utm_*`, `fbclid` and similar parameters from resolved links
+- **Unresolved link warning** — marks links still on `t.co` with `⚠` and asks before opening them
+- **Popup** — lists resolved links on the current page, with buttons to copy one or all, in light or dark mode following the system theme
+- **Options** — turn tracking removal, the warning, the `✓` mark and the tooltip on or off
 - **Badge** — the extension icon shows a count of resolved links on the current page
 - No data collection, no external requests
 
@@ -54,6 +57,7 @@ Install from [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/ur
 
 | Permission | Reason |
 |---|---|
+| `storage` | Save your options |
 | `host_permissions: https://t.co/*` | Resolve t.co URLs if needed |
 | `host_permissions: https://twitter.com/*`, `https://x.com/*` | Inject content scripts into Twitter/X pages |
 
@@ -63,9 +67,13 @@ Install from [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/ur
 url-cleaner/
 ├── manifest.json     Extension manifest (MV3)
 ├── intercept.js      Fetch/XHR interceptor (MAIN world, document_start)
-├── content.js        DOM rewriter + UI (isolated world, document_idle)
+├── content.js        DOM rewriter (isolated world, document_idle)
+├── lib/              Settings, tracking removal and unresolved link warning
 ├── background.js     Service worker — updates badge
 ├── popup.html        Popup UI
 ├── popup.js          Popup logic
+├── options.html      Options page
+├── options.js        Options logic
+├── ui.css            Theme shared by the popup and options pages
 └── icons/            Extension icons (16, 32, 48, 128px)
 ```

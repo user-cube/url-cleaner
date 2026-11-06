@@ -2,65 +2,139 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="ui.css">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      width: 360px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #15202b;
-      color: #e7e9ea;
-    }
+    body { width: 360px; }
+
     header {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 14px 16px;
-      border-bottom: 1px solid #2f3336;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
     }
-    header img { width: 24px; height: 24px; }
+    header img { width: 22px; height: 22px; }
     header h1 { font-size: 15px; font-weight: 600; }
-    header .count {
+    #count {
       margin-left: auto;
-      background: #1d9bf0;
-      color: white;
+      padding: 1px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
       font-size: 12px;
       font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 12px;
     }
+
+    #unresolved {
+      padding: 8px 16px;
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-size: 12px;
+    }
+
     #empty {
-      padding: 24px 16px;
-      color: #6e767d;
+      padding: 32px 24px;
+      color: var(--muted);
       font-size: 13px;
       text-align: center;
     }
-    ul { list-style: none; max-height: 400px; overflow-y: auto; }
+
+    ul { max-height: 380px; overflow-y: auto; list-style: none; }
     li {
-      padding: 10px 16px;
-      border-bottom: 1px solid #2f3336;
       display: flex;
-      flex-direction: column;
-      gap: 3px;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 10px 10px 16px;
+      border-bottom: 1px solid var(--border);
     }
     li:last-child { border-bottom: none; }
-    .tco { font-size: 11px; color: #6e767d; }
-    .expanded {
-      font-size: 13px;
-      color: #1d9bf0;
-      text-decoration: none;
-      word-break: break-all;
+    li:hover { background: var(--hover); }
+
+    .body { flex: 1; min-width: 0; }
+    .destination { display: block; color: inherit; text-decoration: none; }
+    .destination[href]:hover .host { color: var(--accent); text-decoration: underline; }
+    .host,
+    .path,
+    .meta {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .expanded:hover { text-decoration: underline; }
+    .host { font-size: 14px; font-weight: 600; }
+    .path { color: var(--muted); font-size: 12px; }
+    .meta { margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .cleaned { color: var(--ok); }
+
+    button {
+      border: none;
+      background: none;
+      color: var(--muted);
+      font: inherit;
+      cursor: pointer;
+    }
+    .copy {
+      display: grid;
+      flex: none;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border-radius: 50%;
+    }
+    .copy:hover { background: var(--accent-soft); color: var(--accent); }
+    .copy svg { grid-area: 1 / 1; width: 16px; height: 16px; }
+    .copy .icon-done { display: none; }
+    .copy.done { color: var(--ok); }
+    .copy.done .icon-copy { display: none; }
+    .copy.done .icon-done { display: block; }
+
+    footer {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 9px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+    }
+    footer button,
+    footer a { color: var(--muted); font-size: 12px; text-decoration: none; }
+    footer button:hover,
+    footer a:hover { color: var(--accent); text-decoration: underline; }
+    #copy-all { color: var(--accent); font-weight: 600; }
+    .spacer { margin-left: auto; }
+
+    [hidden] { display: none !important; }
   </style>
 </head>
 <body>
   <header>
-    <img src="icons/icon32.png">
+    <img src="icons/icon32.png" alt="">
     <h1>URL Cleaner</h1>
-    <span class="count" id="count">0</span>
+    <span id="count" hidden></span>
   </header>
-  <div id="empty">No resolved links on this page yet.</div>
-  <ul id="list"></ul>
+  <p id="unresolved" role="status" hidden></p>
+  <p id="empty"></p>
+  <ul id="list" hidden></ul>
+  <footer>
+    <button id="copy-all" type="button" hidden>Copy all</button>
+    <button id="options" class="spacer" type="button">Options</button>
+    <a href="https://github.com/user-cube/url-cleaner" target="_blank" rel="noopener">Open source</a>
+  </footer>
+  <template id="row">
+    <li>
+      <div class="body">
+        <a class="destination">
+          <span class="host"></span>
+          <span class="path"></span>
+        </a>
+        <span class="meta"><span class="tco"></span><span class="cleaned" hidden> · Tracking removed</span></span>
+      </div>
+      <button class="copy" type="button" aria-label="Copy link" title="Copy link">
+        <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+        <svg class="icon-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
+      </button>
+    </li>
+  </template>
   <script src="popup.js"></script>
 </body>
 </html>

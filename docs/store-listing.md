@@ -4,6 +4,10 @@ Source text for the Chrome Web Store and Firefox Add-ons (AMO) listings. Both da
 
 The short description in `manifest.json` is what Chrome shows as its summary. It goes live when a new package is uploaded.
 
+## Permission justification (Chrome)
+
+`storage`: saves the user's options.
+
 ## Links
 
 - Homepage: https://github.com/user-cube/url-cleaner
@@ -25,7 +29,11 @@ Features:
 • Works on twitter.com and x.com
 • Handles both inline tweet links and card preview links
 • Updates dynamically as you scroll and new tweets load
+• Removes utm_*, fbclid and similar tracking parameters from resolved links
+• Warns before opening a link that is still on t.co
 • Tooltip on hover shows the real destination URL
 • A subtle ✓ marks resolved links
-• Popup and icon badge list and count the resolved links on the page
+• Popup lists the resolved links on the page, with buttons to copy them
+• Icon badge counts the resolved links
+• Options to turn each of these on or off
 • No data collection, no external requests
