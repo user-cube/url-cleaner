@@ -16,6 +16,16 @@ describe("extractUrlFromText", () => {
     );
   });
 
+  it("joins a link X split across spans (Firefox innerText)", () => {
+    expect(
+      extractUrlFromText(
+        "https://\neditorial.rottentomatoes.com/article/renewe\nd-and-cancelled-tv-shows-2026/?cmp=TWRT_Edit_Renewed_SlowHorses\n …",
+      ),
+    ).toBe(
+      "https://editorial.rottentomatoes.com/article/renewed-and-cancelled-tv-shows-2026/?cmp=TWRT_Edit_Renewed_SlowHorses",
+    );
+  });
+
   it("trims whitespace before checking", () => {
     expect(extractUrlFromText("  https://example.com  ")).toBe("https://example.com");
   });
