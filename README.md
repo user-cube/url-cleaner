@@ -61,6 +61,10 @@ Install from [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/ur
 | `host_permissions: https://t.co/*` | Resolve t.co URLs if needed |
 | `host_permissions: https://twitter.com/*`, `https://x.com/*` | Inject content scripts into Twitter/X pages |
 
+## Privacy
+
+URL Cleaner does not collect, store or send any personal data. It reads link data on twitter.com and x.com pages inside your browser to show each link's real destination. Your options are saved with the browser's own `storage.sync`, and the extension makes no requests to any server of its own.
+
 ## Files
 
 ```
@@ -77,3 +81,20 @@ url-cleaner/
 ├── ui.css            Theme shared by the popup and options pages
 └── icons/            Extension icons (16, 32, 48, 128px)
 ```
+
+## Releasing
+
+Merging to `main` lets [release-please](https://github.com/googleapis/release-please) open a release PR. Merging that PR creates the GitHub release, attaches `url-cleaner-chrome.zip` and `url-cleaner-firefox.zip`, and submits them to both stores. Each store reviews the version before users get it.
+
+Store submission runs only when the repository variable `PUBLISH_TO_STORES` is `true`, and needs these repository secrets:
+
+| Secret | Where to get it |
+|---|---|
+| `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET` | An OAuth client in a Google Cloud project with the Chrome Web Store API enabled |
+| `CWS_REFRESH_TOKEN` | A refresh token for that client, from the account that owns the extension |
+| `CWS_PUBLISHER_ID` | The segment after `devconsole/` in the Chrome Web Store developer dashboard URL (not the extension ID) |
+| `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | [addons.mozilla.org API keys](https://addons.mozilla.org/en-US/developers/addon/api/key/) |
+
+See the [chrome-webstore-upload guide](https://github.com/fregante/chrome-webstore-upload-keys) for creating the Google credentials step by step.
+
+The Google OAuth app stays in testing mode, with the extension owner's account as its only test user, so `CWS_REFRESH_TOKEN` expires 7 days after it is created. Before a release, generate a new token and update the secret with `gh secret set CWS_REFRESH_TOKEN`. If the token has expired, the `publish-chrome` job fails with `invalid_grant`; update the secret and re-run the job. The Firefox job is not affected.

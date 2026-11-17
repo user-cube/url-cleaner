@@ -53,3 +53,64 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
         run: gh release upload "$TAG_NAME" url-cleaner-chrome.zip url-cleaner-firefox.zip --clobber
+
+      # Hand the packages to the store jobs below
+      - uses: actions/upload-artifact@v7
+        with:
+          name: extension-packages
+          path: |
+            url-cleaner-chrome.zip
+            url-cleaner-firefox.zip
+
+  # Store publishing runs only once the PUBLISH_TO_STORES repository variable is
+  # "true", so releases keep working before the store credentials are set up.
+  # Each store reviews the version before users get it.
+  publish-chrome:
+    needs: [release-please, upload-assets]
+    if: needs.release-please.outputs.release_created == 'true' && vars.PUBLISH_TO_STORES == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: extension-packages
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "26"
+
+      - name: Upload and publish to the Chrome Web Store
+        env:
+          EXTENSION_ID: anlndofbmkhpckmfbnebmboibmeiblcj
+          PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: npx --yes chrome-webstore-upload-cli@4.0.2 --source url-cleaner-chrome.zip
+
+      # The Google OAuth app stays in testing mode, where refresh tokens expire after 7 days
+      - name: Explain an expired refresh token
+        if: failure()
+        run: echo "::error title=Chrome Web Store upload failed::If the log shows invalid_grant, the refresh token expired (testing-mode tokens last 7 days). Generate a new one and update the CWS_REFRESH_TOKEN secret, then re-run this job."
+
+  publish-firefox:
+    needs: [release-please, upload-assets]
+    if: needs.release-please.outputs.release_created == 'true' && vars.PUBLISH_TO_STORES == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: extension-packages
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "26"
+
+      # web-ext signs a directory, and the Firefox manifest only exists in the built zip
+      - run: unzip -q url-cleaner-firefox.zip -d firefox
+
+      - name: Submit to addons.mozilla.org
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        # Submit without waiting for the review to finish
+        run: npx --yes web-ext@10.8.0 sign --source-dir firefox --channel listed --approval-timeout 0
