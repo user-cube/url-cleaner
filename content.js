@@ -162,3 +162,28 @@ chrome.storage.sync.get(URL_CLEANER_DEFAULTS, (stored) => {
   if (!chrome.runtime.lastError && stored) settings = stored;
   start();
 });
+// Flatten fragmented <span> elements inside X links so Ctrl+C never inserts mid-URL newlines
+function flattenTweetLinks(root = document) {
+  const anchors = root.querySelectorAll('article a[href^="http"]');
+  for (const a of anchors) {
+    if (a.dataset.urlFlattened) continue;
+    const text = a.textContent || '';
+    if (!/^https?:\/\//i.test(text.trim())) continue;
+
+    // Preserve the extension's visual checkmark badge if present, flatten everything else
+    const cleanText = text.replace(/[\r\n]+/g, '').trim();
+    if (a.querySelector('span')) {
+      a.textContent = cleanText;
+      a.dataset.urlFlattened = '1';
+    }
+  }
+}
+
+flattenTweetLinks();
+new MutationObserver((mutations) => {
+  for (const m of mutations) {
+    for (const node of m.addedNodes) {
+      if (node.nodeType === 1) flattenTweetLinks(node);
+    }
+  }
+}).observe(document.body, { childList: true, subtree: true });
