@@ -61,6 +61,10 @@ Install from [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/ur
 | `host_permissions: https://t.co/*` | Resolve t.co URLs if needed |
 | `host_permissions: https://twitter.com/*`, `https://x.com/*` | Inject content scripts into Twitter/X pages |
 
+## Privacy
+
+URL Cleaner does not collect, store or send any personal data. It reads link data on twitter.com and x.com pages inside your browser to show each link's real destination. Your options are saved with the browser's own `storage.sync`, and the extension makes no requests to any server of its own.
+
 ## Files
 
 ```
