@@ -90,11 +90,14 @@ Store submission runs only when the repository variable `PUBLISH_TO_STORES` is `
 
 | Secret | Where to get it |
 |---|---|
-| `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET` | An OAuth client in a Google Cloud project with the Chrome Web Store API enabled |
-| `CWS_REFRESH_TOKEN` | A refresh token for that client, from the account that owns the extension |
 | `CWS_PUBLISHER_ID` | The segment after `devconsole/` in the Chrome Web Store developer dashboard URL (not the extension ID) |
 | `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | [addons.mozilla.org API keys](https://addons.mozilla.org/en-US/developers/addon/api/key/) |
 
-See the [chrome-webstore-upload guide](https://github.com/fregante/chrome-webstore-upload-keys) for creating the Google credentials step by step.
+The Chrome job signs in to Google without a stored key or token: it exchanges the workflow's GitHub OIDC token for a short-lived token of the `url-cleaner-cws` service account (Workload Identity Federation). The Workload Identity pool and the service account are managed outside this repository, and the service account's email is added in the Chrome Web Store developer dashboard (Account > Service accounts). Only `release.yml` on `main` may use it.
 
-The Google OAuth app stays in testing mode, with the extension owner's account as its only test user, so `CWS_REFRESH_TOKEN` expires 7 days after it is created. Before a release, generate a new token and update the secret with `gh secret set CWS_REFRESH_TOKEN`. If the token has expired, the `publish-chrome` job fails with `invalid_grant`; update the secret and re-run the job. The Firefox job is not affected.
+It also needs these repository variables, from that stack's outputs:
+
+| Variable | Output |
+|---|---|
+| `GCP_WORKLOAD_IDENTITY_PROVIDER` | `workload_identity_provider` |
+| `CWS_SERVICE_ACCOUNT` | `chrome_webstore_service_account` |
