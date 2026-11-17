@@ -77,3 +77,18 @@ url-cleaner/
 ├── ui.css            Theme shared by the popup and options pages
 └── icons/            Extension icons (16, 32, 48, 128px)
 ```
+
+## Releasing
+
+Merging to `main` lets [release-please](https://github.com/googleapis/release-please) open a release PR. Merging that PR creates the GitHub release, attaches `url-cleaner-chrome.zip` and `url-cleaner-firefox.zip`, and submits them to both stores. Each store reviews the version before users get it.
+
+Store submission runs only when the repository variable `PUBLISH_TO_STORES` is `true`, and needs these repository secrets:
+
+| Secret | Where to get it |
+|---|---|
+| `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET` | An OAuth client in a Google Cloud project with the Chrome Web Store API enabled |
+| `CWS_REFRESH_TOKEN` | A refresh token for that client, from the account that owns the extension |
+| `CWS_PUBLISHER_ID` | Chrome Web Store developer dashboard → Account |
+| `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | [addons.mozilla.org API keys](https://addons.mozilla.org/en-US/developers/addon/api/key/) |
+
+See the [chrome-webstore-upload guide](https://github.com/fregante/chrome-webstore-upload-keys) for creating the Google credentials step by step.
