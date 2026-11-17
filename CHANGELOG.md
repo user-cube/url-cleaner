@@ -4,6 +4,13 @@
 
 * fix manifest for firefox ([a9adc9f](https://github.com/user-cube/url-cleaner/commit/a9adc9fb540fbf9d81acecd0b94e5d86281cf45e))
 
+## [1.1.2](https://github.com/user-cube/url-cleaner/compare/v1.1.1...v1.1.2) (2026-11-17)
+
+
+### Bug Fixes
+
+* resolve card links from the post's inline link ([#29](https://github.com/user-cube/url-cleaner/issues/29)) ([2c3c3a7](https://github.com/user-cube/url-cleaner/commit/2c3c3a7133e2517a04fa6484e4cffbee12fa7619))
+
 ## [1.1.1](https://github.com/user-cube/url-cleaner/compare/v1.1.0...v1.1.1) (2026-11-17)
 
 
