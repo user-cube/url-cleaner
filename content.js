@@ -17,7 +17,9 @@ function updateBadge() {
 }
 
 function extractUrlFromText(a) {
-  const text = a.innerText.trim().replace(/\u2026$/, "");
+  // Firefox's innerText puts line breaks between the spans X splits long links into,
+  // and a URL never contains whitespace
+  const text = a.innerText.replace(/\s+/g, "").replace(/\u2026$/, "");
   if (text.startsWith("http://") || text.startsWith("https://")) {
     return text;
   }
@@ -109,6 +111,65 @@ function guardUnresolvedClick(event) {
   showUnresolvedWarning(a.href);
 }
 
+// X truncates long links by splitting them across spans, some of them hidden.
+// Copying such a link puts line breaks between the pieces, so on copy each
+// resolved link copied in full is replaced with its clean URL on one line.
+function linkTextPattern(a) {
+  const walker = document.createTreeWalker(a, NodeFilter.SHOW_TEXT);
+  const parts = [];
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node.data;
+    if (!text) continue;
+    const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const piece = parts.length > 0 ? `\\s*${escaped}` : escaped;
+    // Whitespace and ellipsis pieces may or may not reach the clipboard
+    parts.push(/^[\s…]*$/.test(text) ? `(?:${piece})?` : piece);
+  }
+  return parts.length > 0 ? new RegExp(parts.join("")) : null;
+}
+
+function selectedResolvedLinks(selection) {
+  const links = document.querySelectorAll('a[data-url-cleaner-done="1"]');
+  // Partly contained too: selecting just a link starts the range inside the
+  // anchor. linkTextPattern then checks that all of its text was copied.
+  const ranges = Array.from({ length: selection.rangeCount }, (_, i) => selection.getRangeAt(i));
+  return Array.from(links).filter((a) => ranges.some((range) => range.intersectsNode(a)));
+}
+
+function cleanCopiedLinks(event) {
+  const selection = window.getSelection();
+  if (!selection || selection.isCollapsed || !event.clipboardData) return;
+  const links = selectedResolvedLinks(selection);
+  if (links.length === 0) return;
+
+  let text = selection.toString();
+  let from = 0;
+  const replaced = new Set();
+  for (const a of links) {
+    const pattern = linkTextPattern(a);
+    const match = pattern && pattern.exec(text.slice(from));
+    if (!match) continue;
+    const start = from + match.index;
+    const href = a.getAttribute("href");
+    text = text.slice(0, start) + href + text.slice(start + match[0].length);
+    from = start + href.length;
+    replaced.add(href);
+  }
+  if (replaced.size === 0) return;
+
+  const container = document.createElement("div");
+  for (let i = 0; i < selection.rangeCount; i++) {
+    container.appendChild(selection.getRangeAt(i).cloneContents());
+  }
+  for (const a of container.querySelectorAll('a[data-url-cleaner-done="1"]')) {
+    if (replaced.has(a.getAttribute("href"))) a.textContent = a.getAttribute("href");
+  }
+
+  event.clipboardData.setData("text/plain", text);
+  event.clipboardData.setData("text/html", container.innerHTML);
+  event.preventDefault();
+}
+
 function startObserving() {
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
@@ -152,6 +213,8 @@ function start() {
     window.addEventListener("click", guardUnresolvedClick, true);
     window.addEventListener("auxclick", guardUnresolvedClick, true);
   }
+
+  document.addEventListener("copy", cleanCopiedLinks);
 
   rewriteAnchors(document);
   startObserving();
