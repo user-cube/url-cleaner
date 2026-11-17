@@ -87,6 +87,11 @@ jobs:
           REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
         run: npx --yes chrome-webstore-upload-cli@4.0.2 --source url-cleaner-chrome.zip
 
+      # The Google OAuth app stays in testing mode, where refresh tokens expire after 7 days
+      - name: Explain an expired refresh token
+        if: failure()
+        run: echo "::error title=Chrome Web Store upload failed::If the log shows invalid_grant, the refresh token expired (testing-mode tokens last 7 days). Generate a new one and update the CWS_REFRESH_TOKEN secret, then re-run this job."
+
   publish-firefox:
     needs: [release-please, upload-assets]
     if: needs.release-please.outputs.release_created == 'true' && vars.PUBLISH_TO_STORES == 'true'

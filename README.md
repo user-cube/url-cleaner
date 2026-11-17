@@ -96,3 +96,5 @@ Store submission runs only when the repository variable `PUBLISH_TO_STORES` is `
 | `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | [addons.mozilla.org API keys](https://addons.mozilla.org/en-US/developers/addon/api/key/) |
 
 See the [chrome-webstore-upload guide](https://github.com/fregante/chrome-webstore-upload-keys) for creating the Google credentials step by step.
+
+The Google OAuth app stays in testing mode, with the extension owner's account as its only test user, so `CWS_REFRESH_TOKEN` expires 7 days after it is created. Before a release, generate a new token and update the secret with `gh secret set CWS_REFRESH_TOKEN`. If the token has expired, the `publish-chrome` job fails with `invalid_grant`; update the secret and re-run the job. The Firefox job is not affected.
