@@ -36,6 +36,16 @@ function markResolved(a, tco, expanded) {
   updateBadge();
 }
 
+// Resolves every link to this t.co on the page, and remembers the mapping for
+// links rendered later. The same t.co often appears both as an inline link and
+// as a card (image and "From <domain>"), and only the inline one shows the URL.
+function resolveEverywhere(tco, expanded) {
+  isoMap.set(tco, expanded);
+  for (const a of document.querySelectorAll(`a[href="${CSS.escape(tco)}"]`)) {
+    markResolved(a, tco, expanded);
+  }
+}
+
 function rewriteAnchor(a) {
   if (!a.href.startsWith("https://t.co/")) return;
   if (a.dataset.urlCleanerDone === "1") return;
@@ -45,7 +55,10 @@ function rewriteAnchor(a) {
   // Try visible text first (inline tweet links)
   const fromText = extractUrlFromText(a);
   if (fromText) {
-    markResolved(a, tco, fromText);
+    // A mapping from the API is kept; otherwise share this one with the
+    // card links for the same t.co, which have no URL text of their own
+    if (isoMap.has(tco)) markResolved(a, tco, fromText);
+    else resolveEverywhere(tco, fromText);
     return;
   }
 
@@ -200,10 +213,7 @@ function start() {
   // Listen for mappings discovered by intercept.js (MAIN world -> isolated world via CustomEvent)
   window.addEventListener("__urlCleanerUpdate", (e) => {
     const { tco, expanded } = e.detail;
-    isoMap.set(tco, expanded);
-    for (const a of document.querySelectorAll(`a[href="${CSS.escape(tco)}"], a[data-url-cleaner-done="pending"][href="${CSS.escape(tco)}"]`)) {
-      markResolved(a, tco, expanded);
-    }
+    resolveEverywhere(tco, expanded);
   });
 
   // Ask intercept.js to resend mappings found before this script started
