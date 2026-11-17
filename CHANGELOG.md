@@ -4,6 +4,13 @@
 
 * fix manifest for firefox ([a9adc9f](https://github.com/user-cube/url-cleaner/commit/a9adc9fb540fbf9d81acecd0b94e5d86281cf45e))
 
+## [1.1.1](https://github.com/user-cube/url-cleaner/compare/v1.1.0...v1.1.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* keep copied X links on one line ([#23](https://github.com/user-cube/url-cleaner/issues/23)) ([e9b2487](https://github.com/user-cube/url-cleaner/commit/e9b2487850853744cdd5f92d4316e48dd4aaefb2))
+
 ## [1.1.0](https://github.com/user-cube/url-cleaner/compare/v1.0.7...v1.1.0) (2026-11-06)
 
 
