@@ -92,7 +92,7 @@ Store submission runs only when the repository variable `PUBLISH_TO_STORES` is `
 |---|---|
 | `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET` | An OAuth client in a Google Cloud project with the Chrome Web Store API enabled |
 | `CWS_REFRESH_TOKEN` | A refresh token for that client, from the account that owns the extension |
-| `CWS_PUBLISHER_ID` | Chrome Web Store developer dashboard → Account |
+| `CWS_PUBLISHER_ID` | The segment after `devconsole/` in the Chrome Web Store developer dashboard URL (not the extension ID) |
 | `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | [addons.mozilla.org API keys](https://addons.mozilla.org/en-US/developers/addon/api/key/) |
 
 See the [chrome-webstore-upload guide](https://github.com/fregante/chrome-webstore-upload-keys) for creating the Google credentials step by step.
