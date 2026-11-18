@@ -47,41 +47,61 @@ function renderRow({ tco, expanded, trackingRemoved }) {
   return row;
 }
 
+// Rows by t.co, so a refresh keeps the rows already shown (and their copied state)
+const rows = new Map();
+let currentLinks = [];
+let lastResponse = "";
+
 function render({ links, unresolved }) {
-  if (unresolved > 0) {
-    $("unresolved").textContent = unresolved === 1
-      ? "1 link is not resolved yet."
-      : `${unresolved} links are not resolved yet.`;
-    $("unresolved").hidden = false;
-  }
+  $("unresolved").textContent = unresolved === 1
+    ? "1 link is not resolved yet."
+    : `${unresolved} links are not resolved yet.`;
+  $("unresolved").hidden = unresolved === 0;
 
-  if (links.length === 0) {
-    $("empty").textContent = NO_LINKS;
-    return;
-  }
-
-  $("empty").hidden = true;
+  currentLinks = links;
+  const empty = links.length === 0;
+  $("empty").textContent = NO_LINKS;
+  $("empty").hidden = !empty;
   $("count").textContent = links.length;
-  $("count").hidden = false;
-  $("list").append(...links.map(renderRow));
-  $("list").hidden = false;
+  $("count").hidden = empty;
+  $("list").hidden = empty;
+  $("copy-all").hidden = empty;
 
-  const copyAll = $("copy-all");
-  copyAll.hidden = false;
-  copyAll.addEventListener("click", async () => {
-    await navigator.clipboard.writeText(links.map((link) => link.expanded).join("\n"));
-    copyAll.textContent = "Copied";
-    setTimeout(() => { copyAll.textContent = "Copy all"; }, FEEDBACK_MS);
-  });
+  const shown = new Set();
+  $("list").replaceChildren(...links.map((link) => {
+    const key = `${link.tco} ${link.expanded}`;
+    shown.add(key);
+    if (!rows.has(key)) rows.set(key, renderRow(link).firstElementChild);
+    return rows.get(key);
+  }));
+  for (const key of rows.keys()) if (!shown.has(key)) rows.delete(key);
 }
+
+$("copy-all").addEventListener("click", async () => {
+  const copyAll = $("copy-all");
+  await navigator.clipboard.writeText(currentLinks.map((link) => link.expanded).join("\n"));
+  copyAll.textContent = "Copied";
+  setTimeout(() => { copyAll.textContent = "Copy all"; }, FEEDBACK_MS);
+});
 
 $("options").addEventListener("click", () => chrome.runtime.openOptionsPage());
 $("empty").textContent = NOT_ON_X;
 
-chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-  if (!tab) return;
-  chrome.tabs.sendMessage(tab.id, { type: "GET_RESOLVED" }, (response) => {
+// Links keep resolving while the page scrolls, so ask again while the popup is open
+const REFRESH_MS = 500;
+
+function refresh(tabId) {
+  chrome.tabs.sendMessage(tabId, { type: "GET_RESOLVED" }, (response) => {
     if (chrome.runtime.lastError || !response) return;
+    const serialized = JSON.stringify(response);
+    if (serialized === lastResponse) return;
+    lastResponse = serialized;
     render(response);
   });
+}
+
+chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+  if (!tab) return;
+  refresh(tab.id);
+  setInterval(() => refresh(tab.id), REFRESH_MS);
 });
