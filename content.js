@@ -2,8 +2,31 @@
 // 1. Visible text in the anchor (for inline tweet links)
 // 2. Mappings from intercept.js via CustomEvents (for card links)
 
-// Track all resolved links for the popup: tco -> expanded
+// Every link resolved in this tab: tco -> { expanded, trackingRemoved }
 const resolvedMap = new Map();
+
+// X is a single-page app, so the content script outlives each page. The popup
+// lists only the links resolved since the last navigation, plus the resolved
+// links still on screen (for example a timeline restored by going back).
+const pageTcos = new Set();
+let pageUrl = location.href;
+
+function syncPage() {
+  if (location.href === pageUrl) return;
+  pageUrl = location.href;
+  pageTcos.clear();
+  updateBadge();
+}
+
+function currentLinks() {
+  const tcos = new Set(pageTcos);
+  for (const a of document.querySelectorAll("a[data-url-cleaner-tco]")) {
+    tcos.add(a.dataset.urlCleanerTco);
+  }
+  // An anchor can carry a t.co this script never resolved, such as one marked
+  // by a content script orphaned by an extension update
+  return [...tcos].filter((tco) => resolvedMap.has(tco)).map((tco) => ({ tco, ...resolvedMap.get(tco) }));
+}
 
 // Mirror of the MAIN world map, populated via CustomEvents from intercept.js
 const isoMap = new Map();
@@ -11,7 +34,7 @@ const isoMap = new Map();
 let settings = URL_CLEANER_DEFAULTS;
 
 function updateBadge() {
-  chrome.runtime.sendMessage({ type: "UPDATE_BADGE", count: resolvedMap.size }, () => {
+  chrome.runtime.sendMessage({ type: "UPDATE_BADGE", count: currentLinks().length }, () => {
     void chrome.runtime.lastError;
   });
 }
@@ -30,9 +53,11 @@ function markResolved(a, tco, expanded) {
   const href = settings.stripTracking ? stripTracking(expanded) : expanded;
   a.setAttribute("href", href);
   a.dataset.urlCleanerDone = "1";
+  a.dataset.urlCleanerTco = tco;
   // Tooltip: show original t.co + destination on hover
   if (settings.showTooltip) a.setAttribute("title", `🔗 ${href}\n(was ${tco})`);
   resolvedMap.set(tco, { expanded: href, trackingRemoved: href !== expanded });
+  pageTcos.add(tco);
   updateBadge();
 }
 
@@ -81,8 +106,9 @@ function rewriteAnchors(root) {
 // Respond to popup requesting the list of resolved links
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === "GET_RESOLVED") {
+    syncPage();
     sendResponse({
-      links: Array.from(resolvedMap, ([tco, link]) => ({ tco, ...link })),
+      links: currentLinks(),
       unresolved: document.querySelectorAll('a[data-url-cleaner-done="pending"]').length,
     });
   }
@@ -185,6 +211,7 @@ function cleanCopiedLinks(event) {
 
 function startObserving() {
   const observer = new MutationObserver((mutations) => {
+    syncPage();
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
         if (node.nodeType !== Node.ELEMENT_NODE) continue;
