@@ -4,6 +4,14 @@
 
 * fix manifest for firefox ([a9adc9f](https://github.com/user-cube/url-cleaner/commit/a9adc9fb540fbf9d81acecd0b94e5d86281cf45e))
 
+## [1.1.3](https://github.com/user-cube/url-cleaner/compare/v1.1.2...v1.1.3) (2026-11-18)
+
+
+### Bug Fixes
+
+* scope popup links to the current page ([#33](https://github.com/user-cube/url-cleaner/issues/33)) ([c9783bf](https://github.com/user-cube/url-cleaner/commit/c9783bfef6033cc390f00bcb8f73886829ba8b8d))
+* update the popup while it is open ([#36](https://github.com/user-cube/url-cleaner/issues/36)) ([73e3c77](https://github.com/user-cube/url-cleaner/commit/73e3c773936814c10dfe94d7859fcca624bc69f4))
+
 ## [1.1.2](https://github.com/user-cube/url-cleaner/compare/v1.1.1...v1.1.2) (2026-11-17)
 
 
