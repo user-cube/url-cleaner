@@ -6,7 +6,7 @@ on:
 
 jobs:
   ci:
-    uses: AutomationDojo/reusable-cicd/.github/workflows/node-build-and-test-pr.yml@caed38801492a672fe8410fd30d5e43578bc185a # v1.16.0
+    uses: AutomationDojo/reusable-cicd/.github/workflows/node-build-and-test-pr.yml@2983ecf3336c4eadc3178c10996e7fd1f0758ade # v1.16.1
     with:
       node-version: "26"
       build-cmd: npm test && npm run build

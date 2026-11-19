@@ -10,7 +10,7 @@ permissions:
 jobs:
   # Uses a GitHub App token, so the release PRs it opens trigger CI
   release-please:
-    uses: AutomationDojo/reusable-cicd/.github/workflows/release-please.yml@caed38801492a672fe8410fd30d5e43578bc185a # v1.16.0
+    uses: AutomationDojo/reusable-cicd/.github/workflows/release-please.yml@2983ecf3336c4eadc3178c10996e7fd1f0758ade # v1.16.1
     secrets:
       GITHUB_APP_ID: ${{ secrets.GH_APP_ID }}
       GITHUB_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
@@ -66,7 +66,7 @@ jobs:
 
       # Short-lived Google token for the url-cleaner-cws service account; no key
       # or refresh token is stored.
-      - uses: AutomationDojo/reusable-cicd/.github/actions/chrome-webstore-publish@caed38801492a672fe8410fd30d5e43578bc185a # v1.16.0
+      - uses: AutomationDojo/reusable-cicd/.github/actions/chrome-webstore-publish@2983ecf3336c4eadc3178c10996e7fd1f0758ade # v1.16.1
         with:
           zip: url-cleaner-chrome.zip
           extension-id: anlndofbmkhpckmfbnebmboibmeiblcj
@@ -84,7 +84,7 @@ jobs:
           name: extension-packages
 
       # Submits without waiting for the review to finish
-      - uses: AutomationDojo/reusable-cicd/.github/actions/firefox-amo-publish@caed38801492a672fe8410fd30d5e43578bc185a # v1.16.0
+      - uses: AutomationDojo/reusable-cicd/.github/actions/firefox-amo-publish@2983ecf3336c4eadc3178c10996e7fd1f0758ade # v1.16.1
         with:
           zip: url-cleaner-firefox.zip
           api-key: ${{ secrets.AMO_JWT_ISSUER }}
